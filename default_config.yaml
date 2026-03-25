@@ -1,0 +1,22 @@
+# Instagram Integration — Default Configuration
+# These values are used when no config.json exists yet.
+
+# Instagram Graph API Credentials
+# access_token: ""        # Long-lived access token from Facebook Login
+# ig_user_id: ""           # Instagram Business/Creator account numeric ID
+
+# Defaults
+defaults:
+  max_results: 25
+  caption_max_length: 2200
+
+# Memory integration
+memory:
+  auto_save: true
+  export_format: "markdown"
+
+# Security
+security:
+  max_content_length: 4000
+  sanitize_content: true
+  strip_injection_patterns: true

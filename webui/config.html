@@ -1,0 +1,88 @@
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 16px;">
+
+    <h4 style="margin: 0 0 16px 0; background: linear-gradient(45deg, #833AB4, #FD1D1D, #F77737); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Instagram Settings</h4>
+
+    <div style="margin-bottom: 16px;">
+        <label data-ig="label-token" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 13px;">Access Token</label>
+        <input data-ig="access-token" type="password" placeholder="Enter your long-lived access token"
+               style="width: 100%; padding: 6px 10px; border: 1px solid var(--border-color, #ccc); border-radius: 4px; font-size: 13px; box-sizing: border-box;">
+        <small style="color: var(--text-secondary, #888);">Long-lived access token from Facebook Login (valid 60 days, auto-refreshable)</small>
+    </div>
+
+    <div style="margin-bottom: 16px;">
+        <label data-ig="label-userid" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 13px;">Instagram User ID</label>
+        <input data-ig="ig-user-id" type="text" placeholder="e.g., 17841400123456789"
+               style="width: 100%; padding: 6px 10px; border: 1px solid var(--border-color, #ccc); border-radius: 4px; font-size: 13px; box-sizing: border-box;">
+        <small style="color: var(--text-secondary, #888);">Your Instagram Business/Creator account numeric ID (found via Graph API Explorer)</small>
+    </div>
+
+    <div style="margin-bottom: 16px; padding: 10px; background: #fff8e1; border-radius: 4px; border-left: 3px solid #F77737;">
+        <strong data-ig="setup-title" style="font-size: 12px; color: #e65100;">Setup Guide</strong>
+        <ol style="margin: 8px 0 0 0; padding-left: 20px; font-size: 12px; color: var(--text-secondary, #555);">
+            <li>Create a Facebook App at <code>developers.facebook.com</code></li>
+            <li>Add the Instagram Graph API product</li>
+            <li>Link your Instagram Business/Creator account to a Facebook Page</li>
+            <li>Generate a User Access Token with required permissions</li>
+            <li>Exchange the short-lived token for a long-lived token</li>
+            <li>Enter the token and your Instagram User ID above</li>
+        </ol>
+    </div>
+
+    <button data-ig="save-btn"
+            style="background: #E1306C; color: #fff; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer; font-size: 13px;">
+        Save Instagram Settings
+    </button>
+    <span data-ig="save-status" style="margin-left: 10px; font-size: 12px;"></span>
+</div>
+
+<script>
+(function() {
+    const fetchApi = globalThis.fetchApi || fetch;
+    const API_CONFIG = '/api/plugins/instagram/instagram_config_api';
+
+    function $(sel) { return document.querySelector('[data-ig="' + sel + '"]'); }
+
+    async function loadConfig() {
+        try {
+            const resp = await fetchApi(API_CONFIG);
+            const config = await resp.json();
+            if (config.access_token) $('access-token').value = config.access_token;
+            if (config.ig_user_id) $('ig-user-id').value = config.ig_user_id;
+        } catch (e) {
+            console.error('Failed to load config:', e);
+        }
+    }
+
+    async function saveConfig() {
+        const status = $('save-status');
+        status.textContent = 'Saving...';
+        status.style.color = '#e65100';
+        try {
+            const config = {
+                access_token: $('access-token').value,
+                ig_user_id: $('ig-user-id').value.trim(),
+            };
+            const resp = await fetchApi(API_CONFIG, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({action: 'set', config: config})
+            });
+            const data = await resp.json();
+            if (data.ok) {
+                status.textContent = 'Saved!';
+                status.style.color = '#2e7d32';
+            } else {
+                status.textContent = data.error || 'Save failed';
+                status.style.color = '#c62828';
+            }
+        } catch (e) {
+            status.textContent = 'Save failed';
+            status.style.color = '#c62828';
+        }
+        setTimeout(function() { status.textContent = ''; }, 3000);
+    }
+
+    $('save-btn').addEventListener('click', saveConfig);
+    loadConfig();
+})();
+</script>

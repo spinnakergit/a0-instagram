@@ -1,0 +1,9 @@
+name: instagram
+title: Instagram Integration
+description: Post photos, stories, reels, and manage Instagram content via Meta's Instagram Graph API.
+version: 1.0.0
+settings_sections:
+  - external
+per_project_config: true
+per_agent_config: true
+always_enabled: false
