@@ -67,16 +67,16 @@ class InstagramClient:
     @classmethod
     def from_config(cls, agent=None):
         """Factory: create client from A0 plugin config."""
-        from plugins.instagram.helpers.instagram_auth import get_instagram_config
+        from usr.plugins.instagram.helpers.instagram_auth import get_instagram_config
         config = get_instagram_config(agent)
         return cls(config)
 
     def _get_token(self) -> str:
-        from plugins.instagram.helpers.instagram_auth import get_access_token
+        from usr.plugins.instagram.helpers.instagram_auth import get_access_token
         return get_access_token(self.config)
 
     def _get_user_id(self) -> str:
-        from plugins.instagram.helpers.instagram_auth import get_ig_user_id
+        from usr.plugins.instagram.helpers.instagram_auth import get_ig_user_id
         return get_ig_user_id(self.config)
 
     async def _get_session(self) -> aiohttp.ClientSession:
@@ -129,7 +129,7 @@ class InstagramClient:
                     self._rate_limiter.update_from_headers(dict(resp.headers))
 
                     # Track usage
-                    from plugins.instagram.helpers.instagram_auth import increment_usage
+                    from usr.plugins.instagram.helpers.instagram_auth import increment_usage
                     increment_usage(self.config, "api_calls")
 
                     if resp.status == 429:
@@ -292,7 +292,7 @@ class InstagramClient:
         )
 
         if not result.get("error"):
-            from plugins.instagram.helpers.instagram_auth import increment_usage
+            from usr.plugins.instagram.helpers.instagram_auth import increment_usage
             increment_usage(self.config, "posts_published")
 
         return result
@@ -363,7 +363,7 @@ class InstagramClient:
             params={"message": text},
         )
         if not result.get("error"):
-            from plugins.instagram.helpers.instagram_auth import increment_usage
+            from usr.plugins.instagram.helpers.instagram_auth import increment_usage
             increment_usage(self.config, "comments_posted")
         return result
 
@@ -375,7 +375,7 @@ class InstagramClient:
             params={"message": text},
         )
         if not result.get("error"):
-            from plugins.instagram.helpers.instagram_auth import increment_usage
+            from usr.plugins.instagram.helpers.instagram_auth import increment_usage
             increment_usage(self.config, "comments_posted")
         return result
 
@@ -467,6 +467,6 @@ class InstagramClient:
         # Only content published via the Content Publishing API can be managed.
         result = await self._request("DELETE", f"/{media_id}")
         if not result.get("error"):
-            from plugins.instagram.helpers.instagram_auth import increment_usage
+            from usr.plugins.instagram.helpers.instagram_auth import increment_usage
             increment_usage(self.config, "media_deleted")
         return result

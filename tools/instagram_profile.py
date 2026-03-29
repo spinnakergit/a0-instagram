@@ -9,7 +9,7 @@ class InstagramProfile(Tool):
         user_id = self.args.get("user_id", "")
         username = self.args.get("username", "")
 
-        from plugins.instagram.helpers.instagram_auth import get_instagram_config, has_credentials
+        from usr.plugins.instagram.helpers.instagram_auth import get_instagram_config, has_credentials
         config = get_instagram_config(self.agent)
 
         if not has_credentials(config):
@@ -18,7 +18,7 @@ class InstagramProfile(Tool):
                 break_loop=False,
             )
 
-        from plugins.instagram.helpers.instagram_client import InstagramClient
+        from usr.plugins.instagram.helpers.instagram_client import InstagramClient
         client = InstagramClient(config)
 
         try:
@@ -45,7 +45,7 @@ class InstagramProfile(Tool):
                 break_loop=False,
             )
 
-        from plugins.instagram.helpers.sanitize import format_profile
+        from usr.plugins.instagram.helpers.sanitize import format_profile
         formatted = format_profile(result)
         return Response(message=f"Your Instagram profile:\n\n{formatted}", break_loop=False)
 
@@ -64,7 +64,7 @@ class InstagramProfile(Tool):
                 break_loop=False,
             )
 
-        from plugins.instagram.helpers.sanitize import format_profile
+        from usr.plugins.instagram.helpers.sanitize import format_profile
         formatted = format_profile(result)
         return Response(message=f"Profile:\n\n{formatted}", break_loop=False)
 
@@ -84,6 +84,6 @@ class InstagramProfile(Tool):
             )
 
         profile_data = result.get("business_discovery", result)
-        from plugins.instagram.helpers.sanitize import format_profile
+        from usr.plugins.instagram.helpers.sanitize import format_profile
         formatted = format_profile(profile_data)
         return Response(message=f"Profile:\n\n{formatted}", break_loop=False)

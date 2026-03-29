@@ -11,7 +11,7 @@ class InstagramComment(Tool):
         text = self.args.get("text", "")
         max_results = self.args.get("max_results", "50")
 
-        from plugins.instagram.helpers.instagram_auth import get_instagram_config, has_credentials
+        from usr.plugins.instagram.helpers.instagram_auth import get_instagram_config, has_credentials
         config = get_instagram_config(self.agent)
 
         if not has_credentials(config):
@@ -20,7 +20,7 @@ class InstagramComment(Tool):
                 break_loop=False,
             )
 
-        from plugins.instagram.helpers.instagram_client import InstagramClient
+        from usr.plugins.instagram.helpers.instagram_client import InstagramClient
         client = InstagramClient(config)
 
         try:
@@ -47,7 +47,7 @@ class InstagramComment(Tool):
                 break_loop=False,
             )
 
-        from plugins.instagram.helpers.sanitize import validate_media_id, clamp_limit
+        from usr.plugins.instagram.helpers.sanitize import validate_media_id, clamp_limit
         try:
             media_id = validate_media_id(media_id)
         except ValueError as e:
@@ -64,7 +64,7 @@ class InstagramComment(Tool):
             )
 
         comments = result.get("data", [])
-        from plugins.instagram.helpers.sanitize import format_comments
+        from usr.plugins.instagram.helpers.sanitize import format_comments
         formatted = format_comments(comments)
         count = len(comments)
         return Response(
@@ -78,7 +78,7 @@ class InstagramComment(Tool):
         if not text:
             return Response(message="Error: 'text' is required for the comment.", break_loop=False)
 
-        from plugins.instagram.helpers.sanitize import validate_media_id, sanitize_content
+        from usr.plugins.instagram.helpers.sanitize import validate_media_id, sanitize_content
         try:
             media_id = validate_media_id(media_id)
         except ValueError as e:
@@ -108,7 +108,7 @@ class InstagramComment(Tool):
         if not text:
             return Response(message="Error: 'text' is required for the reply.", break_loop=False)
 
-        from plugins.instagram.helpers.sanitize import sanitize_content, validate_media_id
+        from usr.plugins.instagram.helpers.sanitize import sanitize_content, validate_media_id
         try:
             comment_id = validate_media_id(comment_id)
         except ValueError as e:
@@ -135,7 +135,7 @@ class InstagramComment(Tool):
         if not comment_id:
             return Response(message="Error: 'comment_id' is required to delete.", break_loop=False)
 
-        from plugins.instagram.helpers.sanitize import validate_media_id
+        from usr.plugins.instagram.helpers.sanitize import validate_media_id
         try:
             comment_id = validate_media_id(comment_id)
         except ValueError as e:

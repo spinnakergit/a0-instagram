@@ -11,7 +11,7 @@ class InstagramPost(Tool):
         video_url = self.args.get("video_url", "")
         image_urls = self.args.get("image_urls", "")  # comma-separated for carousel
 
-        from plugins.instagram.helpers.instagram_auth import get_instagram_config, has_credentials
+        from usr.plugins.instagram.helpers.instagram_auth import get_instagram_config, has_credentials
         config = get_instagram_config(self.agent)
 
         if not has_credentials(config):
@@ -22,7 +22,7 @@ class InstagramPost(Tool):
 
         # Validate caption
         if caption:
-            from plugins.instagram.helpers.sanitize import sanitize_caption, validate_caption
+            from usr.plugins.instagram.helpers.sanitize import sanitize_caption, validate_caption
             caption = sanitize_caption(caption)
             ok, length, issues = validate_caption(caption)
             if not ok:
@@ -31,7 +31,7 @@ class InstagramPost(Tool):
                     break_loop=False,
                 )
 
-        from plugins.instagram.helpers.instagram_client import InstagramClient
+        from usr.plugins.instagram.helpers.instagram_client import InstagramClient
         client = InstagramClient(config)
 
         try:
@@ -58,7 +58,7 @@ class InstagramPost(Tool):
                 break_loop=False,
             )
 
-        from plugins.instagram.helpers.sanitize import validate_url
+        from usr.plugins.instagram.helpers.sanitize import validate_url
         image_url = validate_url(image_url)
 
         self.set_progress("Creating photo container...")
@@ -94,7 +94,7 @@ class InstagramPost(Tool):
                 break_loop=False,
             )
 
-        from plugins.instagram.helpers.sanitize import validate_url
+        from usr.plugins.instagram.helpers.sanitize import validate_url
         video_url = validate_url(video_url)
 
         self.set_progress("Creating reel container...")
@@ -151,7 +151,7 @@ class InstagramPost(Tool):
         if len(urls) > 10:
             return Response(message="Error: Carousel supports at most 10 items.", break_loop=False)
 
-        from plugins.instagram.helpers.sanitize import validate_url
+        from usr.plugins.instagram.helpers.sanitize import validate_url
         for url in urls:
             validate_url(url)
 

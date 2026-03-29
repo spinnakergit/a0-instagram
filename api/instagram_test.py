@@ -16,18 +16,7 @@ class InstagramTest(ApiHandler):
 
     async def process(self, input: dict, request: Request) -> dict | Response:
         try:
-            # Self-heal: ensure symlink exists for plugin namespace imports
-            from pathlib import Path
-            plugin_dir = Path(__file__).resolve().parent.parent
-            for root in [Path("/a0"), Path("/git/agent-zero")]:
-                plugins_dir = root / "plugins"
-                if plugins_dir.is_dir():
-                    symlink = plugins_dir / "instagram"
-                    if not symlink.exists():
-                        symlink.symlink_to(plugin_dir)
-                    break
-
-            from plugins.instagram.helpers.instagram_auth import get_instagram_config, is_authenticated, get_usage
+            from usr.plugins.instagram.helpers.instagram_auth import get_instagram_config, is_authenticated, get_usage
 
             config = get_instagram_config()
             token = config.get("access_token", "")

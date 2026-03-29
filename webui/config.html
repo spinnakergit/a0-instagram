@@ -1,4 +1,4 @@
-<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 16px;">
+<div data-ig="root" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 16px;">
 
     <h4 style="margin: 0 0 16px 0; background: linear-gradient(45deg, #833AB4, #FD1D1D, #F77737); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Instagram Settings</h4>
 
@@ -28,7 +28,7 @@
         </ol>
     </div>
 
-    <button data-ig="save-btn"
+    <button data-ig="save-btn" onclick="window._igConfig.save()"
             style="background: #E1306C; color: #fff; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer; font-size: 13px;">
         Save Instagram Settings
     </button>
@@ -37,15 +37,18 @@
 
 <script>
 (function() {
-    const fetchApi = globalThis.fetchApi || fetch;
-    const API_CONFIG = '/api/plugins/instagram/instagram_config_api';
+    function fetchApi(url, opts) {
+        return (globalThis.fetchApi || fetch)(url, opts);
+    }
+    var API_CONFIG = '/api/plugins/instagram/instagram_config_api';
 
-    function $(sel) { return document.querySelector('[data-ig="' + sel + '"]'); }
+    function root() { return document.querySelector('[data-ig="root"]'); }
+    function $(sel) { var r = root(); return r ? r.querySelector('[data-ig="' + sel + '"]') : null; }
 
     async function loadConfig() {
         try {
-            const resp = await fetchApi(API_CONFIG);
-            const config = await resp.json();
+            var resp = await fetchApi(API_CONFIG);
+            var config = await resp.json();
             if (config.access_token) $('access-token').value = config.access_token;
             if (config.ig_user_id) $('ig-user-id').value = config.ig_user_id;
         } catch (e) {
@@ -54,20 +57,20 @@
     }
 
     async function saveConfig() {
-        const status = $('save-status');
+        var status = $('save-status');
         status.textContent = 'Saving...';
         status.style.color = '#e65100';
         try {
-            const config = {
+            var config = {
                 access_token: $('access-token').value,
                 ig_user_id: $('ig-user-id').value.trim(),
             };
-            const resp = await fetchApi(API_CONFIG, {
+            var resp = await fetchApi(API_CONFIG, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({action: 'set', config: config})
             });
-            const data = await resp.json();
+            var data = await resp.json();
             if (data.ok) {
                 status.textContent = 'Saved!';
                 status.style.color = '#2e7d32';
@@ -82,7 +85,7 @@
         setTimeout(function() { status.textContent = ''; }, 3000);
     }
 
-    $('save-btn').addEventListener('click', saveConfig);
-    loadConfig();
+    window._igConfig = { save: saveConfig };
+    setTimeout(loadConfig, 50);
 })();
 </script>

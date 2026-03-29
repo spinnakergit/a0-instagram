@@ -20,7 +20,7 @@
     </div>
 
     <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;">
-        <button data-ig="test-btn" style="background: #E1306C; color: #fff; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 12px;">Test Connection</button>
+        <button data-ig="test-btn" onclick="window._igMain.testConnection()" style="background: #E1306C; color: #fff; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 12px;">Test Connection</button>
     </div>
 
     <div data-ig="info" style="font-size: 11px; color: var(--text-secondary, #888);"></div>
@@ -28,7 +28,7 @@
 
 <script>
 (function() {
-    const fetchApi = globalThis.fetchApi || fetch;
+    function fetchApi(url, opts) { return (globalThis.fetchApi || fetch)(url, opts); }
     const API_TEST = '/api/plugins/instagram/instagram_test';
 
     function $(sel) { return document.querySelector('[data-ig="' + sel + '"]'); }
@@ -68,7 +68,7 @@
         }
     }
 
-    $('test-btn').addEventListener('click', testConnection);
-    testConnection();
+    window._igMain = { testConnection: testConnection };
+    setTimeout(testConnection, 50);
 })();
 </script>

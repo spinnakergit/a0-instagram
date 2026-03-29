@@ -9,7 +9,7 @@ class InstagramRead(Tool):
         media_id = self.args.get("media_id", "")
         max_results = self.args.get("max_results", "25")
 
-        from plugins.instagram.helpers.instagram_auth import get_instagram_config, has_credentials
+        from usr.plugins.instagram.helpers.instagram_auth import get_instagram_config, has_credentials
         config = get_instagram_config(self.agent)
 
         if not has_credentials(config):
@@ -18,10 +18,10 @@ class InstagramRead(Tool):
                 break_loop=False,
             )
 
-        from plugins.instagram.helpers.sanitize import clamp_limit
+        from usr.plugins.instagram.helpers.sanitize import clamp_limit
         limit = clamp_limit(max_results, default=25, maximum=100)
 
-        from plugins.instagram.helpers.instagram_client import InstagramClient
+        from usr.plugins.instagram.helpers.instagram_client import InstagramClient
         client = InstagramClient(config)
 
         try:
@@ -49,7 +49,7 @@ class InstagramRead(Tool):
             )
 
         media_list = result.get("data", [])
-        from plugins.instagram.helpers.sanitize import format_media_list
+        from usr.plugins.instagram.helpers.sanitize import format_media_list
         formatted = format_media_list(media_list)
         count = len(media_list)
         return Response(
@@ -64,7 +64,7 @@ class InstagramRead(Tool):
                 break_loop=False,
             )
 
-        from plugins.instagram.helpers.sanitize import validate_media_id
+        from usr.plugins.instagram.helpers.sanitize import validate_media_id
         try:
             media_id = validate_media_id(media_id)
         except ValueError as e:
@@ -78,7 +78,7 @@ class InstagramRead(Tool):
                 break_loop=False,
             )
 
-        from plugins.instagram.helpers.sanitize import format_media
+        from usr.plugins.instagram.helpers.sanitize import format_media
         formatted = format_media(result)
         return Response(message=f"Post details:\n\n{formatted}", break_loop=False)
 

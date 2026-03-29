@@ -8,7 +8,7 @@ class InstagramManage(Tool):
         action = self.args.get("action", "")
         media_id = self.args.get("media_id", "")
 
-        from plugins.instagram.helpers.instagram_auth import get_instagram_config, has_credentials
+        from usr.plugins.instagram.helpers.instagram_auth import get_instagram_config, has_credentials
         config = get_instagram_config(self.agent)
 
         if not has_credentials(config):
@@ -23,7 +23,7 @@ class InstagramManage(Tool):
                 break_loop=False,
             )
 
-        from plugins.instagram.helpers.instagram_client import InstagramClient
+        from usr.plugins.instagram.helpers.instagram_client import InstagramClient
         client = InstagramClient(config)
 
         try:

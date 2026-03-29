@@ -10,7 +10,7 @@ class InstagramInsights(Tool):
         period = self.args.get("period", "day")
         metrics = self.args.get("metrics", "")
 
-        from plugins.instagram.helpers.instagram_auth import get_instagram_config, has_credentials
+        from usr.plugins.instagram.helpers.instagram_auth import get_instagram_config, has_credentials
         config = get_instagram_config(self.agent)
 
         if not has_credentials(config):
@@ -19,7 +19,7 @@ class InstagramInsights(Tool):
                 break_loop=False,
             )
 
-        from plugins.instagram.helpers.instagram_client import InstagramClient
+        from usr.plugins.instagram.helpers.instagram_client import InstagramClient
         client = InstagramClient(config)
 
         try:
@@ -56,7 +56,7 @@ class InstagramInsights(Tool):
             )
 
         insights_data = result.get("data", [])
-        from plugins.instagram.helpers.sanitize import format_insights
+        from usr.plugins.instagram.helpers.sanitize import format_insights
         formatted = format_insights(insights_data)
         return Response(
             message=f"Account insights (period: {period}):\n\n{formatted}",
@@ -70,7 +70,7 @@ class InstagramInsights(Tool):
                 break_loop=False,
             )
 
-        from plugins.instagram.helpers.sanitize import validate_media_id
+        from usr.plugins.instagram.helpers.sanitize import validate_media_id
         try:
             media_id = validate_media_id(media_id)
         except ValueError as e:
@@ -89,7 +89,7 @@ class InstagramInsights(Tool):
             )
 
         insights_data = result.get("data", [])
-        from plugins.instagram.helpers.sanitize import format_insights
+        from usr.plugins.instagram.helpers.sanitize import format_insights
         formatted = format_insights(insights_data)
         return Response(
             message=f"Media insights (ID: {media_id}):\n\n{formatted}",

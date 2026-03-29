@@ -10,7 +10,7 @@ class InstagramSearch(Tool):
         sort = self.args.get("sort", "recent")
         max_results = self.args.get("max_results", "25")
 
-        from plugins.instagram.helpers.instagram_auth import get_instagram_config, has_credentials
+        from usr.plugins.instagram.helpers.instagram_auth import get_instagram_config, has_credentials
         config = get_instagram_config(self.agent)
 
         if not has_credentials(config):
@@ -22,10 +22,10 @@ class InstagramSearch(Tool):
         if not query:
             return Response(message="Error: 'query' is required for search.", break_loop=False)
 
-        from plugins.instagram.helpers.sanitize import clamp_limit
+        from usr.plugins.instagram.helpers.sanitize import clamp_limit
         limit = clamp_limit(max_results, default=25, maximum=50)
 
-        from plugins.instagram.helpers.instagram_client import InstagramClient
+        from usr.plugins.instagram.helpers.instagram_client import InstagramClient
         client = InstagramClient(config)
 
         try:
@@ -40,7 +40,7 @@ class InstagramSearch(Tool):
             await client.close()
 
     async def _search_hashtag(self, client, tag: str, sort: str, limit: int) -> Response:
-        from plugins.instagram.helpers.sanitize import validate_hashtag
+        from usr.plugins.instagram.helpers.sanitize import validate_hashtag
         try:
             tag = validate_hashtag(tag)
         except ValueError as e:
@@ -77,7 +77,7 @@ class InstagramSearch(Tool):
             )
 
         media_list = media_result.get("data", [])
-        from plugins.instagram.helpers.sanitize import format_media_list
+        from usr.plugins.instagram.helpers.sanitize import format_media_list
         formatted = format_media_list(media_list)
         sort_label = "top" if sort == "top" else "recent"
         count = len(media_list)
