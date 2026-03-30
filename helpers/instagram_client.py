@@ -175,7 +175,7 @@ class InstagramClient:
         return await self._request(
             "GET",
             f"/{user_id}",
-            params={"fields": "id,username,name,biography,profile_picture_url"},
+            params={"fields": "id,username,name,biography,media_count,followers_count,follows_count,profile_picture_url"},
         )
 
     async def get_user_profile(self, user_id: str) -> dict:
@@ -183,7 +183,7 @@ class InstagramClient:
         return await self._request(
             "GET",
             f"/{user_id}",
-            params={"fields": "id,username,name,biography,profile_picture_url"},
+            params={"fields": "id,username,name,biography,media_count,followers_count,follows_count,profile_picture_url"},
         )
 
     async def get_user_by_username(self, username: str) -> dict:
@@ -197,7 +197,7 @@ class InstagramClient:
             return {"error": True, "detail": "Username is required"}
         if not _re.match(r"^[a-zA-Z0-9._]{1,30}$", username):
             return {"error": True, "detail": "Invalid username format"}
-        fields = "id,username,name,biography,profile_picture_url"
+        fields = "id,username,name,biography,media_count,followers_count,follows_count,profile_picture_url"
         return await self._request(
             "GET",
             f"/{user_id}",

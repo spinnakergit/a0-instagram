@@ -135,7 +135,7 @@ def is_authenticated(config: dict) -> tuple:
         resp = requests.get(
             f"{BASE_URL}/{ig_user_id}",
             params={
-                "fields": "id,username",
+                "fields": "id,username,media_count,followers_count",
                 "access_token": token,
             },
             timeout=10,
@@ -144,7 +144,9 @@ def is_authenticated(config: dict) -> tuple:
         if resp.status_code == 200:
             data = resp.json()
             username = data.get("username", "unknown")
-            info = f"@{username} (connected)"
+            followers = data.get("followers_count", 0)
+            media_count = data.get("media_count", 0)
+            info = f"@{username} ({followers} followers, {media_count} posts)"
             return (True, info)
         elif resp.status_code == 190:
             return (False, "Access token expired or invalid")
