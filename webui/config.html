@@ -1,94 +1,124 @@
-<div data-ig="root" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 16px;">
+<html>
+<head><title>Instagram</title></head>
+<body>
+    <div x-data="{ activeTab: 'credentials' }" x-init="
+        if (!config.access_token) config.access_token = '';
+        if (!config.ig_user_id) config.ig_user_id = '';
+        if (!config.defaults) config.defaults = {};
+        if (!config.defaults.max_results) config.defaults.max_results = 25;
+        if (!config.defaults.caption_max_length) config.defaults.caption_max_length = 2200;
+        if (!config.memory) config.memory = {};
+        if (config.memory.auto_save === undefined) config.memory.auto_save = true;
+        if (!config.security) config.security = {};
+        if (!config.security.max_content_length) config.security.max_content_length = 4000;
+    ">
+        <template x-if="config">
+            <div>
+                <!-- Tab Navigation -->
+                <div style="display: flex; gap: 0; border-bottom: 2px solid var(--border-color, #e0e0e0); margin-bottom: 16px;">
+                    <template x-for="tab in ['credentials', 'defaults', 'security']">
+                        <button @click="activeTab = tab"
+                            :style="'padding: 8px 16px; border: none; background: none; cursor: pointer; font-size: 12px; font-weight: 600; margin-bottom: -2px; color: ' + (activeTab === tab ? '#E1306C' : 'var(--text-secondary, #888)') + '; border-bottom: 2px solid ' + (activeTab === tab ? '#E1306C' : 'transparent')"
+                            x-text="tab.charAt(0).toUpperCase() + tab.slice(1)"></button>
+                    </template>
+                </div>
 
-    <h4 style="margin: 0 0 16px 0; background: linear-gradient(45deg, #833AB4, #FD1D1D, #F77737); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Instagram Settings</h4>
+                <!-- Credentials Tab -->
+                <div x-show="activeTab === 'credentials'">
+                    <div class="section-description">Need help? See the <a href="https://github.com/spinnakergit/a0-instagram/blob/main/docs/SETUP.md" target="_blank" style="color: #E1306C;">Setup Guide</a> for step-by-step instructions.</div>
 
-    <div style="margin-bottom: 16px;">
-        <label data-ig="label-token" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 13px;">Access Token</label>
-        <input data-ig="access-token" type="password" placeholder="Enter your long-lived access token"
-               style="width: 100%; padding: 6px 10px; border: 1px solid var(--border-color, #ccc); border-radius: 4px; font-size: 13px; box-sizing: border-box;">
-        <small style="color: var(--text-secondary, #888);">Long-lived access token from Facebook Login (valid 60 days, auto-refreshable)</small>
+                    <div class="section-title">Instagram Authentication</div>
+
+                    <div class="field">
+                        <div class="field-label">
+                            <div class="field-title">Access Token</div>
+                            <div class="field-description">Long-lived access token from Facebook Login (valid 60 days, auto-refreshable).</div>
+                        </div>
+                        <div class="field-control">
+                            <input type="password" x-model="config.access_token" placeholder="Enter your long-lived access token">
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="field-label">
+                            <div class="field-title">Instagram User ID</div>
+                            <div class="field-description">Your Instagram Business/Creator account numeric ID (found via Graph API Explorer).</div>
+                        </div>
+                        <div class="field-control">
+                            <input type="text" x-model="config.ig_user_id" placeholder="e.g., 17841400123456789">
+                        </div>
+                    </div>
+
+                    <div style="padding: 10px; background: var(--bg-secondary, #f5f5f5); border-radius: 6px; font-size: 12px;">
+                        <strong>Quick Setup:</strong>
+                        <ol style="margin: 4px 0 0 0; padding-left: 20px;">
+                            <li>Create a Facebook App at <code>developers.facebook.com</code></li>
+                            <li>Add the Instagram Graph API product</li>
+                            <li>Link your Instagram Business/Creator account to a Facebook Page</li>
+                            <li>Generate a User Access Token with required permissions</li>
+                            <li>Exchange the short-lived token for a long-lived token</li>
+                            <li>Enter the token and your Instagram User ID above</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Defaults Tab -->
+                <div x-show="activeTab === 'defaults'">
+                    <div class="section-title">Content Defaults</div>
+
+                    <div class="field">
+                        <div class="field-label">
+                            <div class="field-title">Max Results</div>
+                            <div class="field-description">Maximum items returned per feed/media query (1-100).</div>
+                        </div>
+                        <div class="field-control">
+                            <input type="number" min="1" max="100" x-model.number="config.defaults.max_results">
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <div class="field-label">
+                            <div class="field-title">Caption Max Length</div>
+                            <div class="field-description">Maximum characters per caption (1-2200).</div>
+                        </div>
+                        <div class="field-control">
+                            <input type="number" min="1" max="2200" x-model.number="config.defaults.caption_max_length">
+                        </div>
+                    </div>
+
+                    <div class="section-title">Memory</div>
+
+                    <div class="field">
+                        <div class="field-label">
+                            <div class="field-title">Auto-save to memory</div>
+                            <div class="field-description">Automatically save research summaries to agent memory.</div>
+                        </div>
+                        <div class="field-control">
+                            <label class="toggle"><input type="checkbox" x-model="config.memory.auto_save"><span class="toggler"></span></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Tab -->
+                <div x-show="activeTab === 'security'">
+                    <div class="section-title">Security Settings</div>
+
+                    <div class="field">
+                        <div class="field-label">
+                            <div class="field-title">Max Content Length</div>
+                            <div class="field-description">Maximum characters per content input (1-4000).</div>
+                        </div>
+                        <div class="field-control">
+                            <input type="number" min="1" max="4000" x-model.number="config.security.max_content_length">
+                        </div>
+                    </div>
+
+                    <div style="font-size: 12px; color: var(--text-secondary, #888); padding: 4px 0 8px;">
+                        Input sanitization and prompt injection defense are always active.
+                    </div>
+                </div>
+            </div>
+        </template>
     </div>
-
-    <div style="margin-bottom: 16px;">
-        <label data-ig="label-userid" style="display: block; font-weight: 600; margin-bottom: 4px; font-size: 13px;">Instagram User ID</label>
-        <input data-ig="ig-user-id" type="text" placeholder="e.g., 17841400123456789"
-               style="width: 100%; padding: 6px 10px; border: 1px solid var(--border-color, #ccc); border-radius: 4px; font-size: 13px; box-sizing: border-box;">
-        <small style="color: var(--text-secondary, #888);">Your Instagram Business/Creator account numeric ID (found via Graph API Explorer)</small>
-    </div>
-
-    <div style="margin-bottom: 16px; padding: 10px; background: #fff8e1; border-radius: 4px; border-left: 3px solid #F77737;">
-        <strong data-ig="setup-title" style="font-size: 12px; color: #e65100;">Setup Guide</strong>
-        <div style="font-size: 12px; color: var(--text-secondary, #555); margin-top: 4px;">
-            Need help? See the <a href="https://github.com/spinnakergit/a0-instagram/blob/main/docs/SETUP.md" target="_blank" style="color: #E1306C;">full Setup Guide</a> for detailed step-by-step instructions.
-        </div>
-        <ol style="margin: 8px 0 0 0; padding-left: 20px; font-size: 12px; color: var(--text-secondary, #555);">
-            <li>Create a Facebook App at <code>developers.facebook.com</code></li>
-            <li>Add the Instagram Graph API product</li>
-            <li>Link your Instagram Business/Creator account to a Facebook Page</li>
-            <li>Generate a User Access Token with required permissions</li>
-            <li>Exchange the short-lived token for a long-lived token</li>
-            <li>Enter the token and your Instagram User ID above</li>
-        </ol>
-    </div>
-
-    <button data-ig="save-btn" onclick="window._igConfig.save()"
-            style="background: #E1306C; color: #fff; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer; font-size: 13px;">
-        Save Instagram Settings
-    </button>
-    <span data-ig="save-status" style="margin-left: 10px; font-size: 12px;"></span>
-</div>
-
-<script>
-(function() {
-    function fetchApi(url, opts) {
-        return (globalThis.fetchApi || fetch)(url, opts);
-    }
-    var API_CONFIG = '/api/plugins/instagram/instagram_config_api';
-
-    function root() { return document.querySelector('[data-ig="root"]'); }
-    function $(sel) { var r = root(); return r ? r.querySelector('[data-ig="' + sel + '"]') : null; }
-
-    async function loadConfig() {
-        try {
-            var resp = await fetchApi(API_CONFIG);
-            var config = await resp.json();
-            if (config.access_token) $('access-token').value = config.access_token;
-            if (config.ig_user_id) $('ig-user-id').value = config.ig_user_id;
-        } catch (e) {
-            console.error('Failed to load config:', e);
-        }
-    }
-
-    async function saveConfig() {
-        var status = $('save-status');
-        status.textContent = 'Saving...';
-        status.style.color = '#e65100';
-        try {
-            var config = {
-                access_token: $('access-token').value,
-                ig_user_id: $('ig-user-id').value.trim(),
-            };
-            var resp = await fetchApi(API_CONFIG, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({action: 'set', config: config})
-            });
-            var data = await resp.json();
-            if (data.ok) {
-                status.textContent = 'Saved!';
-                status.style.color = '#2e7d32';
-            } else {
-                status.textContent = data.error || 'Save failed';
-                status.style.color = '#c62828';
-            }
-        } catch (e) {
-            status.textContent = 'Save failed';
-            status.style.color = '#c62828';
-        }
-        setTimeout(function() { status.textContent = ''; }, 3000);
-    }
-
-    window._igConfig = { save: saveConfig };
-    setTimeout(loadConfig, 50);
-})();
-</script>
+</body>
+</html>

@@ -254,7 +254,6 @@ def format_profile(profile: dict) -> str:
     username = sanitize_username(profile.get("username", "unknown"))
     name = _sanitize_external_text(profile.get("name", ""), max_len=100)
     bio = _sanitize_external_text(profile.get("biography", ""), max_len=300)
-    media_count = profile.get("media_count", 0)
     followers = profile.get("followers_count", 0)
     following = profile.get("follows_count", 0)
 
@@ -263,7 +262,7 @@ def format_profile(profile: dict) -> str:
         lines.append(f"Name: {name}")
     if bio:
         lines.append(f"Bio: {bio}")
-    lines.append(f"Posts: {media_count} | Followers: {followers} | Following: {following}")
+    lines.append(f"Followers: {followers} | Following: {following}")
     if profile.get("id"):
         lines.append(f"ID: {profile['id']}")
     return "\n".join(lines)
