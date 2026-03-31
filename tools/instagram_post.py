@@ -73,6 +73,21 @@ class InstagramPost(Tool):
         if not container_id:
             return Response(message="Error: No container ID returned from API.", break_loop=False)
 
+        # Wait for container to be ready (Instagram needs time to fetch the image)
+        import asyncio
+        self.set_progress("Waiting for image processing...")
+        for _ in range(12):  # Max 60 seconds
+            status = await client.check_container_status(container_id)
+            status_code = status.get("status_code", "")
+            if status_code == "FINISHED":
+                break
+            elif status_code == "ERROR":
+                return Response(
+                    message=f"Image processing failed: {status.get('status', 'Unknown error')}",
+                    break_loop=False,
+                )
+            await asyncio.sleep(5)
+
         self.set_progress("Publishing photo...")
         result = await client.publish_media(container_id)
         if result.get("error"):
@@ -182,6 +197,21 @@ class InstagramPost(Tool):
         container_id = container.get("id")
         if not container_id:
             return Response(message="Error: No carousel container ID returned.", break_loop=False)
+
+        # Wait for carousel container to be ready
+        import asyncio
+        self.set_progress("Waiting for carousel processing...")
+        for _ in range(12):  # Max 60 seconds
+            status = await client.check_container_status(container_id)
+            status_code = status.get("status_code", "")
+            if status_code == "FINISHED":
+                break
+            elif status_code == "ERROR":
+                return Response(
+                    message=f"Carousel processing failed: {status.get('status', 'Unknown error')}",
+                    break_loop=False,
+                )
+            await asyncio.sleep(5)
 
         # Step 3: Publish
         self.set_progress("Publishing carousel...")
