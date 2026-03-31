@@ -1,7 +1,7 @@
 ## instagram_post
 Post photos, carousels, and reels to Instagram.
 
-**IMPORTANT:** Pass the image/video URL directly to this tool. Do NOT download, fetch, or re-upload the media — Instagram's API fetches the URL server-side. The URL must be publicly accessible on the internet.
+**IMPORTANT:** Pass the original image/video URL directly to this tool EXACTLY as provided by the user. Do NOT download, re-upload, re-host (e.g. to imgur), or transform the media URL in any way — Instagram's API fetches the URL server-side. The URL must be publicly accessible on the internet. GitHub raw URLs, direct image links, and CDN URLs all work.
 
 **Requires:** Business/Creator account with instagram_content_publish permission
 
